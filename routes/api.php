@@ -1,9 +1,27 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceItemController;
+
+Route::get('/health', function () {
+    $databaseOk = false;
+
+    try {
+        DB::select('SELECT 1');
+        $databaseOk = true;
+    } catch (\Throwable $e) {
+        $databaseOk = false;
+    }
+
+    return response()->json([
+        'status' => $databaseOk ? 'ok' : 'degraded',
+        'api' => true,
+        'database' => $databaseOk,
+    ]);
+});
 
 Route::get('/user', function (Request $request) {
     return $request->user();
